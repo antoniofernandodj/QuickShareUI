@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Arquivos</title>
+    <link rel="stylesheet" href="/main-8191170f8ec3d2c6.css" integrity="sha384&#x2D;nS2A0LCeIijxLoNbaQVnv3YaIjfLygmjFXMS4GOPkt8HWnasaapJ0yR7NhkMHipC"/>
+
+<link rel="modulepreload" href="/QuickShareUI-2e2de132d74ddf66.js" crossorigin=anonymous integrity="sha384-gqCKMkqfKqDJ61MRsyXUudiitsiJnIuJgqfy8qTbcDlEGn+HKEvVpHvwLwU8qSEY">
+<link rel="preload" href="/QuickShareUI-2e2de132d74ddf66_bg.wasm" crossorigin=anonymous integrity="sha384-sEbt7FcdBVpY0F+0jlPeY2otFk0I7DjK57A/UWMYAHhsknVRdW6YgLVBETAQxoUp" as="fetch" type="application/wasm"></head>
+<body>
+<script type="module" nonce="tA50PmV4KhHMqB5E8zw08w==">
+import init, * as bindings from '/QuickShareUI-2e2de132d74ddf66.js';
+const wasm = await init('/QuickShareUI-2e2de132d74ddf66_bg.wasm');
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script></body>
+</html>
