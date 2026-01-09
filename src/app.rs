@@ -10,7 +10,7 @@ pub fn app() -> Html {
         <ContextProvider<FilesStoreContext> context={store}>
             <div class="container">
                 <header>
-                    <h1>{"📁 Upload de Arquivos"}</h1>
+                    <h1>{"📁 Quickshare"}</h1>
                     <p class="subtitle">{"Compartilhe arquivos temporários (válidos por 24 horas)"}</p>
                 </header>
 
