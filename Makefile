@@ -2,7 +2,7 @@
 # Project config
 # =========================
 APP_NAME := quickshare-ui
-IMAGE := $(APP_NAME):latest
+IMAGE := antoniofernandodj/$(APP_NAME):latest
 CONTAINER := $(APP_NAME)-dev
 PORT := 8080
 
@@ -30,6 +30,9 @@ build:
 
 run:
 	docker run --name $(CONTAINER) -p $(PORT):80 --rm $(IMAGE)
+
+push:
+	docker push $(IMAGE)
 
 down:
 	-docker stop $(CONTAINER)
