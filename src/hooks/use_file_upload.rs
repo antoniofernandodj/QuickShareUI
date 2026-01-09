@@ -6,42 +6,36 @@ use crate::services::api::ApiClient;
 use crate::store::files_store::{FilesStoreAction, FilesStoreContext};
 
 #[hook]
-pub fn use_file_upload() -> (Callback<File>, bool, Option<String>) {
+pub fn use_file_upload() -> Callback<File> {
     let store = use_context::<FilesStoreContext>().expect("FilesStoreContext not found");
-    let loading = store.loading;
-    let error = store.error.clone();
 
-    let upload = {
+    Callback::from(move |file: File| {
         let store = store.clone();
-        Callback::from(move |file: File| {
-            let store = store.clone();
-            let filename = file.name();
+        let filename = file.name();
 
-            store.dispatch(FilesStoreAction::SetLoading(true));
-            store.dispatch(FilesStoreAction::SetError(None));
+        // Marca loading global para upload
+        store.dispatch(FilesStoreAction::SetLoading(true));
+        store.dispatch(FilesStoreAction::SetError(None));
 
-            spawn_local(async move {
-                match ApiClient::upload_file(file).await {
-                    Ok(response) => {
-                        let stored_file = StoredFile {
-                            file_id: response.file_id,
-                            filename,
-                            download_url: response.download_url,
-                            expires_at: response.expires_at,
-                            uploaded_at: js_sys::Date::new_0().to_iso_string().into(),
-                        };
-
-                        store.dispatch(FilesStoreAction::AddFile(stored_file));
-                        store.dispatch(FilesStoreAction::SetLoading(false));
-                    }
-                    Err(e) => {
-                        store.dispatch(FilesStoreAction::SetLoading(false));
-                        store.dispatch(FilesStoreAction::SetError(Some(e.to_string())));
-                    }
+        spawn_local(async move {
+            match ApiClient::upload_file(file).await {
+                Ok(response) => {
+                    let stored_file = StoredFile {
+                        file_id: response.file_id,
+                        filename,
+                        download_url: response.download_url,
+                        expires_at: response.expires_at,
+                        uploaded_at: js_sys::Date::new_0().to_iso_string().into(),
+                    };
+                    store.dispatch(FilesStoreAction::AddFile(stored_file));
                 }
-            });
-        })
-    };
+                Err(e) => {
+                    store.dispatch(FilesStoreAction::SetError(Some(e.to_string())));
+                }
+            }
 
-    (upload, loading, error)
+            // Remove loading quando upload termina
+            store.dispatch(FilesStoreAction::SetLoading(false));
+        });
+    })
 }

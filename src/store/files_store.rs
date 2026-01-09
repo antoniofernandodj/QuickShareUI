@@ -8,6 +8,7 @@ pub struct FilesStore {
     pub files: Vec<StoredFile>,
     pub loading: bool,
     pub error: Option<String>,
+    pub downloading_files: Vec<String>, // lista de file_id em download
 }
 
 impl Default for FilesStore {
@@ -16,6 +17,7 @@ impl Default for FilesStore {
             files: Vec::new(),
             loading: false,
             error: None,
+            downloading_files: Vec::new(),
         }
     }
 }
@@ -26,6 +28,7 @@ impl FilesStore {
             files: StorageService::load_files(),
             loading: false,
             error: None,
+            downloading_files: Vec::new(),
         }
     }
 }
@@ -37,6 +40,8 @@ pub enum FilesStoreAction {
     ClearAll,
     SetLoading(bool),
     SetError(Option<String>),
+    StartDownload(String),   // file_id
+    EndDownload(String),     // file_id
 }
 
 impl Reducible for FilesStore {
@@ -63,6 +68,14 @@ impl Reducible for FilesStore {
             }
             FilesStoreAction::SetError(error) => {
                 new_store.error = error;
+            }
+            FilesStoreAction::StartDownload(file_id) => {
+                if !new_store.downloading_files.contains(&file_id) {
+                    new_store.downloading_files.push(file_id);
+                }
+            }
+            FilesStoreAction::EndDownload(file_id) => {
+                new_store.downloading_files.retain(|id| id != &file_id);
             }
         }
         

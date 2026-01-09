@@ -1,10 +1,14 @@
 use yew::prelude::*;
 use crate::components::{error_banner::ErrorBanner, file_list::FileList, upload_form::UploadForm};
 use crate::store::files_store::{FilesStore, FilesStoreContext};
+use crate::utils::constants::API_URL;
+use gloo::console::log;
 
 #[function_component(App)]
 pub fn app() -> Html {
     let store = use_reducer(|| FilesStore::load());
+
+    log!(format!("{}", &API_URL));
 
     html! {
         <ContextProvider<FilesStoreContext> context={store}>
