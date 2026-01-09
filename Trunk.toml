@@ -1,0 +1,5 @@
+[env]
+API_URL = "http://0.0.0.0:7777"
+
+[env.release]
+API_URL = "https://quickshare-latest.onrender.com"
