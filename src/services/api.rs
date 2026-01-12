@@ -17,6 +17,29 @@ pub struct ApiClient;
 
 impl ApiClient {
 
+    // Nova função para verificar se um arquivo existe
+    pub async fn check_file_exists(file_id: &str) -> bool {
+        let url = format!("{}/download/{}", API_URL, file_id);
+        
+        match Request::get(&url).send().await {
+            Ok(response) => response.ok(),
+            Err(_) => false,
+        }
+    }
+
+    // Nova função para validar múltiplos arquivos
+    pub async fn validate_files(files: Vec<StoredFile>) -> Vec<StoredFile> {
+        let mut valid_files = Vec::new();
+        
+        for file in files {
+            if Self::check_file_exists(&file.file_id).await {
+                valid_files.push(file);
+            }
+        }
+        
+        valid_files
+    }
+
 
     pub fn download_file(file: StoredFile, store: UseReducerHandle<crate::store::files_store::FilesStore>) {
         let file_id = file.file_id.clone();

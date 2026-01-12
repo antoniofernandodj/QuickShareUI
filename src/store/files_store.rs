@@ -9,6 +9,7 @@ pub struct FilesStore {
     pub loading: bool,
     pub error: Option<String>,
     pub downloading_files: Vec<String>, // lista de file_id em download
+    pub validating: bool, // novo campo para indicar validação
 }
 
 impl Default for FilesStore {
@@ -18,6 +19,7 @@ impl Default for FilesStore {
             loading: false,
             error: None,
             downloading_files: Vec::new(),
+            validating: false,
         }
     }
 }
@@ -29,6 +31,7 @@ impl FilesStore {
             loading: false,
             error: None,
             downloading_files: Vec::new(),
+            validating: true, // marca como validando ao carregar
         }
     }
 }
@@ -42,6 +45,8 @@ pub enum FilesStoreAction {
     SetError(Option<String>),
     StartDownload(String),   // file_id
     EndDownload(String),     // file_id
+    SetValidatedFiles(Vec<StoredFile>), // nova action
+    SetValidating(bool), // nova action
 }
 
 impl Reducible for FilesStore {
@@ -76,6 +81,13 @@ impl Reducible for FilesStore {
             }
             FilesStoreAction::EndDownload(file_id) => {
                 new_store.downloading_files.retain(|id| id != &file_id);
+            }
+            FilesStoreAction::SetValidatedFiles(files) => {
+                new_store.files = files;
+                StorageService::save_files(&new_store.files);
+            }
+            FilesStoreAction::SetValidating(validating) => {
+                new_store.validating = validating;
             }
         }
         
